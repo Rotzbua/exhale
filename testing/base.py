@@ -11,6 +11,7 @@ All project based test cases should inherit from :class:`testing.base.ExhaleTest
 """
 
 from __future__ import unicode_literals
+
 import os
 import platform
 import re
@@ -21,9 +22,7 @@ from importlib import import_module
 
 import exhale
 import pytest
-import six
-from six import add_metaclass
-from sphinx.testing.path import path
+from sphinx.testing.path import path # todo migrate
 
 from . import TEST_PROJECTS_ROOT, get_exhale_root
 from .decorators import default_confoverrides
@@ -165,6 +164,7 @@ class ExhaleTestCaseMetaclass(type):
                 self.testroot = testroot
 
                 # set the 'testroot' kwarg so that sphinx knows about it
+                # todo migrate
                 app_params.kwargs["srcdir"] = path(testroot)
 
                 # Sphinx demands a `conf.py` is present
