@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 ########################################################################################
 # This file is part of exhale.  Copyright (c) 2017-2023, Stephen McDowell.             #
 # Full BSD 3-Clause license available here:                                            #
@@ -80,7 +79,7 @@ def _generate_doxygen(doxygen_input):
             method to restore some state before exiting the program (namely, the working
             directory before propagating an exception to ``sphinx-build``).
     '''
-    if not isinstance(doxygen_input, six.string_types):
+    if not isinstance(doxygen_input, str):
         return "Error: the `doxygen_input` variable must be of type `str`."
 
     doxyfile = doxygen_input == "Doxyfile"
@@ -106,11 +105,8 @@ def _generate_doxygen(doxygen_input):
             #
             # See excellent synopsis:
             # https://thraxil.org/users/anders/posts/2008/03/13/Subprocess-Hanging-PIPE-is-your-enemy/
-            if six.PY2:
-                tempfile_kwargs = {}
-            else:
-                # encoding argument introduced in python 3
-                tempfile_kwargs = {"encoding": "utf-8"}
+            # encoding argument introduced in python 3
+            tempfile_kwargs = {"encoding": "utf-8"}
             tempfile_kwargs["mode"] = "r+"
             tmp_out_file = tempfile.TemporaryFile(
                 prefix="doxygen_stdout_buff", **tempfile_kwargs
@@ -169,9 +165,9 @@ def _generate_doxygen(doxygen_input):
         # Make sure we had a valid execution of doxygen
         exit_code = doxygen_proc.returncode
         if exit_code != 0:
-            raise RuntimeError("Non-zero return code of [{}] from 'doxygen'...".format(exit_code))
+            raise RuntimeError(f"Non-zero return code of [{exit_code}] from 'doxygen'...")
     except Exception as e:
-        return "Unable to execute 'doxygen': {}".format(e)
+        return f"Unable to execute 'doxygen': {e}"
 
     # returning None signals _success_
     return None
@@ -184,7 +180,7 @@ def _valid_config(config, required):
     ``config``: doxygen input we're looking for
     ``required``: if ``True``, must be present.  if ``False``, NOT ALLOWED to be present
     '''
-    re_template = r"\s*{config}\s*=.*".format(config=config)
+    re_template = fr"\s*{config}\s*=.*"
     found = re.search(re_template, configs.exhaleDoxygenStdin)
     if required:
         return found is not None
@@ -215,7 +211,7 @@ def generateDoxygenXML():
         # 1. INPUT (where doxygen should parse).
         #
         # The below is a modest attempt to validate that these were / were not given.
-        if not isinstance(configs.exhaleDoxygenStdin, six.string_types):
+        if not isinstance(configs.exhaleDoxygenStdin, str):
             return "`exhaleDoxygenStdin` config must be a string!"
 
         if not _valid_config("OUTPUT_DIRECTORY", False):
@@ -245,7 +241,7 @@ def generateDoxygenXML():
                         re-uses this variable and adapts the value for our needs.
             '''.format(
                 default=breathe_default_project,
-                path=breathe_projects[breathe_default_project].rsplit("{sep}xml".format(sep=os.sep), 1)[0]
+                path=breathe_projects[breathe_default_project].rsplit(f"{os.sep}xml", 1)[0]
             ))
 
         if not _valid_config("STRIP_FROM_PATH", False):
@@ -315,7 +311,7 @@ def generateDoxygenXML():
 
         # Include their custom doxygen definitions after the defaults so that they can
         # override anything they want to.  Populate the necessary output dir and strip path.
-        doxy_dir = configs._doxygen_xml_output_directory.rsplit("{sep}xml".format(sep=os.sep), 1)[0]
+        doxy_dir = configs._doxygen_xml_output_directory.rsplit(f"{os.sep}xml", 1)[0]
         internal_configs = textwrap.dedent('''
             # Tell doxygen to output wherever breathe is expecting things
             OUTPUT_DIRECTORY       = "{out}"

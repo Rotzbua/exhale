@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 ########################################################################################
 # This file is part of exhale.  Copyright (c) 2017-2023, Stephen McDowell.             #
 # Full BSD 3-Clause license available here:                                            #
@@ -73,21 +72,21 @@ def time_string(start, end):
                 elif hours == 1:
                     hours_str = "1 hour, "
                 else:
-                    hours_str = "{} hours, ".format(hours)
+                    hours_str = f"{hours} hours, "
 
                 if mins == 0:
                     mins_str = ""
                 elif mins == 1:
                     mins_str = "1 minute, and "
                 else:
-                    mins_str = "{} minutes, and ".format(mins)
+                    mins_str = f"{mins} minutes, and "
 
                 if secs == 1.00:  # LOL I would love to see this happen
                     secs_str = "1.00 second"
                 else:
-                    secs_str = "{} seconds".format(secs)
+                    secs_str = f"{secs} seconds"
 
-                time_str = "{}{}{}".format(hours_str, mins_str, secs_str)
+                time_str = f"{hours_str}{mins_str}{secs_str}"
             except:
                 time_str = str(delta)
         else:
@@ -98,11 +97,8 @@ def time_string(start, end):
 
 
 def get_time():
-    if sys.version_info > (3, 3):
-        # monotonic introduced in 3.3
-        return time.monotonic()
-    else:
-        return time.time()
+    # monotonic introduced in 3.3
+    return time.monotonic()
 
 
 AVAILABLE_KINDS = [
@@ -181,7 +177,7 @@ def contentsDirectiveOrNone(kind):
                 directive=ret,
                 specs=prefix("   ", specs)
             )
-        return "{full_directive}\n\n".format(full_directive=ret)
+        return f"{ret}\n\n"
     else:
         return None
 
@@ -227,7 +223,7 @@ def makeCustomSpecificationsMapping(func):
             specs = func(kind)
             bad   = type(specs) is not list
             for s in specs:
-                if not isinstance(s, six.string_types):
+                if not isinstance(s, str):
                     bad = True
                     break
             if bad:
@@ -242,14 +238,14 @@ def makeCustomSpecificationsMapping(func):
                 '''.format(kind=kind)))
             ret[kind] = specs
     except Exception as e:
-        raise RuntimeError("Unable to create custom specifications:\n{}".format(e))
+        raise RuntimeError(f"Unable to create custom specifications:\n{e}")
 
     # Everything went according to plan, send it back to `conf.py` :)
     return ret
 
 
 def nodeCompoundXMLContents(node):
-    node_xml_path = os.path.join(configs._doxygen_xml_output_directory, "{}.xml".format(node.refid))
+    node_xml_path = os.path.join(configs._doxygen_xml_output_directory, f"{node.refid}.xml")
     if os.path.isfile(node_xml_path):
         try:
             with codecs.open(node_xml_path, "r", "utf-8") as xml:
@@ -504,7 +500,7 @@ def kindAsBreatheDirective(kind):
         The directive to be used for the given ``kind``.  The empty string is returned
         for both unrecognized and ignored input values.
     '''
-    return "doxygen{kind}".format(kind=kind)
+    return f"doxygen{kind}"
 
 
 def specificationsForKind(kind):
@@ -597,90 +593,90 @@ class AnsiColors:
     ####################################################################################
     BLACK         = "30m"
     ''' The ANSI black color. '''
-    BOLD_BLACK    = "30;{bold}".format(bold=BOLD)
+    BOLD_BLACK    = f"30;{BOLD}"
     ''' The ANSI bold black color. '''
-    DIM_BLACK     = "30;{dim}".format(dim=DIM)
+    DIM_BLACK     = f"30;{DIM}"
     ''' The ANSI dim black color. '''
-    UNDER_BLACK   = "30;{under}".format(under=UNDER)
+    UNDER_BLACK   = f"30;{UNDER}"
     ''' The ANSI underline black color. '''
-    INV_BLACK     = "30;{inv}".format(inv=INV)
+    INV_BLACK     = f"30;{INV}"
     ''' The ANSI inverted black color. '''
     ####################################################################################
     RED           = "31m"
     ''' The ANSI red color. '''
-    BOLD_RED      = "31;{bold}".format(bold=BOLD)
+    BOLD_RED      = f"31;{BOLD}"
     ''' The ANSI bold red color. '''
-    DIM_RED       = "31;{dim}".format(dim=DIM)
+    DIM_RED       = f"31;{DIM}"
     ''' The ANSI dim red color. '''
-    UNDER_RED     = "31;{under}".format(under=UNDER)
+    UNDER_RED     = f"31;{UNDER}"
     ''' The ANSI underline red color. '''
-    INV_RED       = "31;{inv}".format(inv=INV)
+    INV_RED       = f"31;{INV}"
     ''' The ANSI inverted red color. '''
     ####################################################################################
     GREEN         = "32m"
     ''' The ANSI green color. '''
-    BOLD_GREEN    = "32;{bold}".format(bold=BOLD)
+    BOLD_GREEN    = f"32;{BOLD}"
     ''' The ANSI bold green color. '''
-    DIM_GREEN     = "32;{dim}".format(dim=DIM)
+    DIM_GREEN     = f"32;{DIM}"
     ''' The ANSI dim green color. '''
-    UNDER_GREEN   = "32;{under}".format(under=UNDER)
+    UNDER_GREEN   = f"32;{UNDER}"
     ''' The ANSI underline green color. '''
-    INV_GREEN     = "32;{inv}".format(inv=INV)
+    INV_GREEN     = f"32;{INV}"
     ''' The ANSI inverted green color. '''
     ####################################################################################
     YELLOW        = "33m"
     ''' The ANSI yellow color. '''
-    BOLD_YELLOW   = "33;{bold}".format(bold=BOLD)
+    BOLD_YELLOW   = f"33;{BOLD}"
     ''' The ANSI bold yellow color. '''
-    DIM_YELLOW    = "33;{dim}".format(dim=DIM)
+    DIM_YELLOW    = f"33;{DIM}"
     ''' The ANSI dim yellow color. '''
-    UNDER_YELLOW  = "33;{under}".format(under=UNDER)
+    UNDER_YELLOW  = f"33;{UNDER}"
     ''' The ANSI underline yellow color. '''
-    INV_YELLOW    = "33;{inv}".format(inv=INV)
+    INV_YELLOW    = f"33;{INV}"
     ''' The ANSI inverted yellow color. '''
     ####################################################################################
     BLUE          = "34m"
     ''' The ANSI blue color. '''
-    BOLD_BLUE     = "34;{bold}".format(bold=BOLD)
+    BOLD_BLUE     = f"34;{BOLD}"
     ''' The ANSI bold blue color. '''
-    DIM_BLUE      = "34;{dim}".format(dim=DIM)
+    DIM_BLUE      = f"34;{DIM}"
     ''' The ANSI dim blue color. '''
-    UNDER_BLUE    = "34;{under}".format(under=UNDER)
+    UNDER_BLUE    = f"34;{UNDER}"
     ''' The ANSI underline blue color. '''
-    INV_BLUE      = "34;{inv}".format(inv=INV)
+    INV_BLUE      = f"34;{INV}"
     ''' The ANSI inverted blue color. '''
     ####################################################################################
     MAGENTA       = "35m"
     ''' The ANSI magenta (purple) color. '''
-    BOLD_MAGENTA  = "35;{bold}".format(bold=BOLD)
+    BOLD_MAGENTA  = f"35;{BOLD}"
     ''' The ANSI bold magenta (purple) color. '''
-    DIM_MAGENTA   = "35;{dim}".format(dim=DIM)
+    DIM_MAGENTA   = f"35;{DIM}"
     ''' The ANSI dim magenta (purple) color. '''
-    UNDER_MAGENTA = "35;{under}".format(under=UNDER)
+    UNDER_MAGENTA = f"35;{UNDER}"
     ''' The ANSI underlined magenta (purple) color. '''
-    INV_MAGENTA   = "35;{inv}".format(inv=INV)
+    INV_MAGENTA   = f"35;{INV}"
     ''' The ANSI inverted magenta (purple) color. '''
     ####################################################################################
     CYAN          = "36m"
     ''' The ANSI cyan color. '''
-    BOLD_CYAN     = "36;{bold}".format(bold=BOLD)
+    BOLD_CYAN     = f"36;{BOLD}"
     ''' The ANSI bold cyan color. '''
-    DIM_CYAN      = "36;{dim}".format(dim=DIM)
+    DIM_CYAN      = f"36;{DIM}"
     ''' The ANSI dim cyan color. '''
-    UNDER_CYAN    = "36;{under}".format(under=UNDER)
+    UNDER_CYAN    = f"36;{UNDER}"
     ''' The ANSI underline cyan color. '''
-    INV_CYAN      = "36;{inv}".format(inv=INV)
+    INV_CYAN      = f"36;{INV}"
     ''' The ANSI inverted cyan color. '''
     ####################################################################################
     WHITE         = "37m"
     ''' The ANSI white color. '''
-    BOLD_WHITE    = "37;{bold}".format(bold=BOLD)
+    BOLD_WHITE    = f"37;{BOLD}"
     ''' The ANSI bold white color. '''
-    DIM_WHITE     = "37;{dim}".format(dim=DIM)
+    DIM_WHITE     = f"37;{DIM}"
     ''' The ANSI dim white color. '''
-    UNDER_WHITE   = "37;{under}".format(under=UNDER)
+    UNDER_WHITE   = f"37;{UNDER}"
     ''' The ANSI underline white color. '''
-    INV_WHITE     = "37;{inv}".format(inv=INV)
+    INV_WHITE     = f"37;{INV}"
     ''' The ANSI inverted white color. '''
 
     @classmethod
@@ -690,9 +686,9 @@ class AnsiColors:
             # ignore specials such as __class__ or __module__
             if not elem.startswith("__"):
                 color_fmt = cls.__dict__[elem]
-                if isinstance(color_fmt, six.string_types) and color_fmt != "BOLD" and color_fmt != "DIM" and \
+                if isinstance(color_fmt, str) and color_fmt != "BOLD" and color_fmt != "DIM" and \
                         color_fmt != "UNDER" and color_fmt != "INV":
-                    print("\033[{fmt}AnsiColors.{name}\033[0m".format(fmt=color_fmt, name=elem))
+                    print(f"\033[{color_fmt}AnsiColors.{elem}\033[0m")
 
 
 def indent(text, prefix, predicate=None):
@@ -742,7 +738,7 @@ def exclaim(err_msg):
 
 
 def colorize(msg, ansi_fmt):
-    return "\033[{}{}\033[0m".format(ansi_fmt, msg)
+    return f"\033[{ansi_fmt}{msg}\033[0m"
 
 
 def _use_color(msg, ansi_fmt, output_stream):
@@ -792,7 +788,7 @@ def verbose_log(msg, ansi_fmt=None):
             log = _use_color(msg, ansi_fmt, sys.stderr)
         else:
             log = msg
-        sys.stderr.write("{log}\n".format(log=log))
+        sys.stderr.write(f"{log}\n")
 
 
 def __fancy(text, language, fmt):
@@ -815,7 +811,7 @@ def fancyErrorString(lex):
         err = traceback.format_exc()
         # shenanigans = "During handling of the above exception, another exception occurred:"
         # err = err.split(shenanigans)[0]
-        return __fancy("{}\n".format(err), lex, "console")
+        return __fancy(f"{err}\n", lex, "console")
     except:
         return "CRITICAL: could not extract traceback.format_exc!"
 
@@ -834,7 +830,7 @@ def fancyError(critical_msg=None, lex="py3tb", singleton_hook=None):
             singleton_hook()
         except Exception as e:
             sys.stderr.write(critical(
-                "fancyError: `singleton_hook` caused exception: {}".format(e)
+                f"fancyError: `singleton_hook` caused exception: {e}"
             ))
 
     os._exit(1)

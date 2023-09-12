@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 ########################################################################################
 # This file is part of exhale.  Copyright (c) 2017-2023, Stephen McDowell.             #
 # Full BSD 3-Clause license available here:                                            #
@@ -1337,7 +1336,7 @@ def apply_sphinx_configurations(app):
     breathe_default_project = app.config.breathe_default_project
     if not breathe_default_project:
         raise ConfigError("You must set the `breathe_default_project` in `conf.py`.")
-    elif not isinstance(breathe_default_project, six.string_types):
+    elif not isinstance(breathe_default_project, str):
         raise ConfigError("The type of `breathe_default_project` must be a string.")
 
     if breathe_default_project not in breathe_projects:
@@ -1351,7 +1350,7 @@ def apply_sphinx_configurations(app):
     # defer validation of existence until after potentially running Doxygen based on
     # the configs given to exhale
     doxy_xml_dir = breathe_projects[breathe_default_project]
-    if not isinstance(doxy_xml_dir, six.string_types):
+    if not isinstance(doxy_xml_dir, str):
         raise ConfigError(
             "The type of `breathe_projects[breathe_default_project]` from `conf.py` was not a string."
         )
@@ -1387,9 +1386,9 @@ def apply_sphinx_configurations(app):
     val_error = "The type of the value for key `{key}` must be `{exp}`, but was `{got}`."
 
     req_kv = [
-        ("containmentFolder",    six.string_types,  True),
-        ("rootFileName",         six.string_types, False),
-        ("doxygenStripFromPath", six.string_types,  True)
+        ("containmentFolder",    (str,),  True),
+        ("rootFileName",         (str,), False),
+        ("doxygenStripFromPath", (str,),  True)
     ]
     for key, expected_type, make_absolute in req_kv:
         # Used in error checking later
@@ -1405,7 +1404,7 @@ def apply_sphinx_configurations(app):
             raise ConfigError(val_error.format(key=key, exp=expected_type, got=val_t))
         # Make sure that a value was provided (e.g. no empty strings)
         if not val:
-            raise ConfigError("Non-empty value for key [{}] required.".format(key))
+            raise ConfigError(f"Non-empty value for key [{key}] required.")
         # If the string represents a path, make it absolute
         if make_absolute:
             # Directories are made absolute relative to app.confdir (where conf.py is)
@@ -1464,7 +1463,7 @@ def apply_sphinx_configurations(app):
     # Make sure the doxygen strip path is an exclude-able path
     if not os.path.exists(doxygenStripFromPath):
         raise ConfigError(
-            "The path given as `doxygenStripFromPath` ({}) does not exist!".format(doxygenStripFromPath)
+            f"The path given as `doxygenStripFromPath` ({doxygenStripFromPath}) does not exist!"
         )
 
     ####################################################################################
@@ -1472,43 +1471,43 @@ def apply_sphinx_configurations(app):
     ####################################################################################
     # TODO: `list` -> `(list, tuple)`, update docs too.
     opt_kv = [
-        ("rootFileTitle",                   six.string_types),
+        ("rootFileTitle",                   (str,)),
         # Build Process Logging, Colors, and Debugging
         ("verboseBuild",                                bool),
         ("alwaysColorize",                              bool),
         ("generateBreatheFileDirectives",               bool),
         # Root API Document Customization and Treeview
-        ("afterTitleDescription",           six.string_types),
-        ("pageHierarchySubSectionTitle",    six.string_types),
-        ("afterHierarchyDescription",       six.string_types),
-        ("fullApiSubSectionTitle",          six.string_types),
-        ("afterBodySummary",                six.string_types),
+        ("afterTitleDescription",           (str,)),
+        ("pageHierarchySubSectionTitle",    (str,)),
+        ("afterHierarchyDescription",       (str,)),
+        ("fullApiSubSectionTitle",          (str,)),
+        ("afterBodySummary",                (str,)),
         ("fullToctreeMaxDepth",                          int),
         ("listingExclude",                              list),
         ("unabridgedOrphanKinds",                (list, set)),
         # Manual Indexing
-        ("classHierarchyFilename",          six.string_types),
-        ("fileHierarchyFilename",           six.string_types),
-        ("pageHierarchyFilename",           six.string_types),
-        ("unabridgedApiFilename",           six.string_types),
-        ("unabridgedOrphanFilename",        six.string_types),
+        ("classHierarchyFilename",          (str,)),
+        ("fileHierarchyFilename",           (str,)),
+        ("pageHierarchyFilename",           (str,)),
+        ("unabridgedApiFilename",           (str,)),
+        ("unabridgedOrphanFilename",        (str,)),
         # Clickable Hierarchies <3
         ("createTreeView",                              bool),
         ("minifyTreeView",                              bool),
         ("treeViewIsBootstrap",                         bool),
-        ("treeViewBootstrapTextSpanClass",  six.string_types),
-        ("treeViewBootstrapIconMimicColor", six.string_types),
-        ("treeViewBootstrapOnhoverColor",   six.string_types),
+        ("treeViewBootstrapTextSpanClass",  (str,)),
+        ("treeViewBootstrapIconMimicColor", (str,)),
+        ("treeViewBootstrapOnhoverColor",   (str,)),
         ("treeViewBootstrapUseBadgeTags",               bool),
-        ("treeViewBootstrapExpandIcon",     six.string_types),
-        ("treeViewBootstrapCollapseIcon",   six.string_types),
+        ("treeViewBootstrapExpandIcon",     (str,)),
+        ("treeViewBootstrapCollapseIcon",   (str,)),
         ("treeViewBootstrapLevels",                      int),
         # Page Level Customization
         ("includeTemplateParamOrderList",               bool),
-        ("pageLevelConfigMeta",             six.string_types),
-        ("repoRedirectURL",                 six.string_types),
+        ("pageLevelConfigMeta",             (str,)),
+        ("repoRedirectURL",                 (str,)),
         ("contentsDirectives",                          bool),
-        ("contentsTitle",                   six.string_types),
+        ("contentsTitle",                   (str,)),
         ("contentsSpecifiers",                          list),
         ("kindsWithContentsDirectives",                 list),
         # Breathe Customization
@@ -1516,7 +1515,7 @@ def apply_sphinx_configurations(app):
         # Doxygen Execution and Customization
         ("exhaleExecutesDoxygen",                       bool),
         ("exhaleUseDoxyfile",                           bool),
-        ("exhaleDoxygenStdin",              six.string_types),
+        ("exhaleDoxygenStdin",              (str,)),
         ("exhaleSilentDoxygen",                         bool),
         # Programlisting Customization
         ("lexerMapping",                                 dict)
@@ -1546,7 +1545,7 @@ def apply_sphinx_configurations(app):
     # These two need to be lists of strings, check to make sure
     def _list_of_strings(lst, title):
         for spec in lst:
-            if not isinstance(spec, six.string_types):
+            if not isinstance(spec, str):
                 raise ConfigError(
                     "`{title}` must be a list of strings.  `{spec}` was of type `{spec_t}`".format(
                         title=title,
@@ -1582,15 +1581,15 @@ def apply_sphinx_configurations(app):
         # returns 'at index {idx}'
         def item_or_index(item, idx):
             try:
-                return "`{item}`".format(item=item)
+                return f"`{item}`"
             except:
-                return "at index {idx}".format(idx=idx)
+                return f"at index {idx}"
 
         exclusions = exhale_args["listingExclude"]
         for idx in range(len(exclusions)):
             # Gather the `pattern` and `flags` parameters for `re.compile`
             item = exclusions[idx]
-            if isinstance(item, six.string_types):
+            if isinstance(item, str):
                 pattern = item
                 flags   = 0
             else:
@@ -1624,14 +1623,14 @@ def apply_sphinx_configurations(app):
         for key in lexer_mapping:
             val = lexer_mapping[key]
             # Make sure both are strings
-            if not isinstance(key, six.string_types) or not isinstance(val, six.string_types):
+            if not isinstance(key, str) or not isinstance(val, str):
                 raise ConfigError("All keys and values in `lexerMapping` must be strings.")
             # Make sure the key is a valid regular expression
             try:
                 regex = re.compile(key)
             except Exception as e:
                 raise ConfigError(
-                    "The `lexerMapping` key [{}] is not a valid regular expression: {}".format(key, e)
+                    f"The `lexerMapping` key [{key}] is not a valid regular expression: {e}"
                 )
             # Make sure the provided lexer is available
             try:
@@ -1676,19 +1675,19 @@ def apply_sphinx_configurations(app):
 
         '''))
         for key in keys_expected:
-            err.write("- {}\n".format(key))
+            err.write(f"- {key}\n")
         err.write(textwrap.dedent('''
             Available keys:
 
         '''))
         for key in keys_available:
-            err.write("- {}\n".format(key))
+            err.write(f"- {key}\n")
         err.write(textwrap.dedent('''
             The Mismatch(es):
 
         '''))
         for key in (keys_available ^ keys_expected):
-            err.write("- {}\n".format(key))
+            err.write(f"- {key}\n")
 
         err_msg = err.getvalue()
         err.close()
@@ -1717,7 +1716,7 @@ def apply_sphinx_configurations(app):
         extra_error = StringIO()
         extra_error.write("Exhale found unexpected keys in `exhale_args`:\n")
         for key in extras:
-            extra_error.write("  - Extra key: {}\n".format(key))
+            extra_error.write(f"  - Extra key: {key}\n")
             potentials = []
             for mate in potential_keys_lower:
                 similarity = similar(key, mate)
@@ -1727,7 +1726,7 @@ def apply_sphinx_configurations(app):
             if potentials:
                 potentials = reversed(sorted(potentials))
                 for rank, mate in potentials:
-                    extra_error.write("    - {:2.2f}% match with: {}\n".format(rank, mate))
+                    extra_error.write(f"    - {rank:2.2f}% match with: {mate}\n")
 
         extra_error_str = extra_error.getvalue()
         extra_error.close()
@@ -1762,11 +1761,11 @@ def apply_sphinx_configurations(app):
         provided_keys = set(customSpecificationsMapping.keys())
         diff = provided_keys - expected_keys
         if diff:
-            raise ConfigError("Found extra keys in `customSpecificationsMapping`: {}".format(diff))
+            raise ConfigError(f"Found extra keys in `customSpecificationsMapping`: {diff}")
         # Sanity check #3: make sure the return values are all strings
         for key in customSpecificationsMapping:
             val_t = type(customSpecificationsMapping[key])
-            if not isinstance(key, six.string_types):
+            if not isinstance(key, str):
                 raise ConfigError(
                     "`customSpecificationsMapping` key `{key}` gave value type `{val_t}` (need `str`).".format(
                         key=key, val_t=val_t
@@ -1792,7 +1791,7 @@ def apply_sphinx_configurations(app):
         if exhaleUseDoxyfile:
             doxyfile_path = os.path.abspath(os.path.join(app.confdir, "Doxyfile"))
             if not os.path.exists(doxyfile_path):
-                raise ConfigError("The file [{}] does not exist".format(doxyfile_path))
+                raise ConfigError(f"The file [{doxyfile_path}] does not exist")
 
         here = os.path.abspath(os.curdir)
         if here == app.confdir:
@@ -1805,7 +1804,7 @@ def apply_sphinx_configurations(app):
         start = utils.get_time()
         if returnPath:
             logger.info(utils.info(
-                "Exhale: changing directories to [{}] to execute Doxygen.".format(app.confdir)
+                f"Exhale: changing directories to [{app.confdir}] to execute Doxygen."
             ))
             os.chdir(app.confdir)
         logger.info(utils.info("Exhale: executing doxygen."))
@@ -1813,7 +1812,7 @@ def apply_sphinx_configurations(app):
         # Being overly-careful to put sphinx back where it was before potentially erroring out
         if returnPath:
             logger.info(utils.info(
-                "Exhale: changing directories back to [{}] after Doxygen.".format(returnPath)
+                f"Exhale: changing directories back to [{returnPath}] after Doxygen."
             ))
             os.chdir(returnPath)
         if status:
@@ -1821,7 +1820,7 @@ def apply_sphinx_configurations(app):
         else:
             end = utils.get_time()
             logger.info(utils.progress(
-                "Exhale: doxygen ran successfully in {}.".format(utils.time_string(start, end))
+                f"Exhale: doxygen ran successfully in {utils.time_string(start, end)}."
             ))
     else:
         if exhaleUseDoxyfile:
@@ -1835,11 +1834,11 @@ def apply_sphinx_configurations(app):
     # Make sure that the files we need are actually there.
     if not os.path.isdir(doxy_xml_dir):
         raise ConfigError(
-            "Exhale: the specified folder [{}] does not exist.  Has Doxygen been run?".format(doxy_xml_dir)
+            f"Exhale: the specified folder [{doxy_xml_dir}] does not exist.  Has Doxygen been run?"
         )
     index = os.path.join(doxy_xml_dir, "index.xml")
     if not os.path.isfile(index):
-        raise ConfigError("Exhale: the file [{}] does not exist.  Has Doxygen been run?".format(index))
+        raise ConfigError(f"Exhale: the file [{index}] does not exist.  Has Doxygen been run?")
 
     # Legacy / debugging feature, warn of its purpose
     if generateBreatheFileDirectives:
@@ -1881,7 +1880,7 @@ def apply_sphinx_configurations(app):
         collapse_data = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data", tree_data_static_base)
         if not os.path.isdir(collapse_data):
             raise ExtensionError(
-                "Exhale: the path to [{}] was not found, possible installation error.".format(collapse_data)
+                f"Exhale: the path to [{collapse_data}] was not found, possible installation error."
             )
         else:
             all_files = tree_data_css + tree_data_js + tree_data_ext
@@ -1892,7 +1891,7 @@ def apply_sphinx_configurations(app):
                     missing.append(path)
             if missing:
                 raise ExtensionError(
-                    "Exhale: the path(s) {} were not found, possible installation error.".format(missing)
+                    f"Exhale: the path(s) {missing} were not found, possible installation error."
                 )
 
         # We have all the files we need, the extra files will be copied automatically by
