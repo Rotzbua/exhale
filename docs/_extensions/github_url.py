@@ -49,7 +49,7 @@ def get_github_base_url():
 
     if not user:
         raise RuntimeError(
-            "Could not parse GitHub user information from remote: {}".format(git_remote_out)
+            f"Could not parse GitHub user information from remote: {git_remote_out}"
         )
 
     # Get the commit hash

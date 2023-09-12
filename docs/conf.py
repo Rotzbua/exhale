@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Configuration file for the Sphinx documentation builder.
 #
@@ -114,7 +113,7 @@ def setup(app):
             .. code-block:: py
 
         """))
-        dcv.write("   {multiline_var}".format(multiline_var=multiline_var))
+        dcv.write(f"   {multiline_var}")
         dcv.write(dedent("""
             .. note::
 
