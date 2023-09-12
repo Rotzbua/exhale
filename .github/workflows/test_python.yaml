@@ -23,7 +23,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
         python-version: ['3.7', '3.8', '3.9', '3.10']
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       ##################################################################################
       - name: Install Doxygen (macOS)
         if: contains(matrix.os, 'macos')
@@ -55,64 +55,16 @@ jobs:
         run: doxygen --version
       ##################################################################################
       - name: Use Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
       - name: Install Python Tools
         run: |
-          pip install -U pip tox codecov coverage
-      # Sphinx 4.x #####################################################################
-      - name: Test Python ${{ matrix.python-version }} / sphinx 4.x
-        env:
-          # NOTE: this is the current minimum supported.
-          # Test sphinx 4.x.
-          SPHINX_VERSION: '>=4,<5'
+          python -m pip install --upgrade pip
+          python -m pip install tox tox-gh-actions
+          python -m pip install codecov coverage
+      # Sphinx #####################################################################
+      - name: Test Python ${{ matrix.python-version }}
         run: |
-          tox -e py -- --cov-report xml:coverage.xml --cov
-      # Don't let code coverage utilities share anything, force clean it all.
-      - name: Cleanup Python ${{ matrix.python-version }} Testing / Coverage Artifacts
-        run: |
-          mv .gitignore nolongerignored
-          git clean -n
-          git clean -f
-          git reset --hard
-      # Sphinx 5.x #####################################################################
-      - name: Test Python ${{ matrix.python-version }} / sphinx 5.x
-        env:
-          # Test sphinx 5.x.
-          SPHINX_VERSION: '>=5,<6'
-        run: |
-          tox -e py -- --cov-report xml:coverage.xml --cov
-       # Don't let code coverage utilities share anything, force clean it all.
-      - name: Cleanup Python ${{ matrix.python-version }} Testing / Coverage Artifacts
-        run: |
-          mv .gitignore nolongerignored
-          git clean -n
-          git clean -f
-          git reset --hard
-      # Sphinx 6.x #####################################################################
-      - name: Test Python ${{ matrix.python-version }} / sphinx 6.x
-        # sphinx 6.x requires python 3.8+
-        if: ${{ matrix.python-version != '3.7' }}
-        env:
-          # Test sphinx 6.x.
-          SPHINX_VERSION: '>=6,<7'
-        run: |
-          tox -e py -- --cov-report xml:coverage.xml --cov
-      # Don't let code coverage utilities share anything, force clean it all.
-      - name: Cleanup Python ${{ matrix.python-version }} Testing / Coverage Artifacts
-        run: |
-          mv .gitignore nolongerignored
-          git clean -n
-          git clean -f
-          git reset --hard
-      # Sphinx 7.x #####################################################################
-      - name: Test Python ${{ matrix.python-version }} / sphinx 7.x
-        # sphinx 7.x requires python 3.9+
-        if: ${{ matrix.python-version != '3.7' && matrix.python-version != '3.8' }}
-        env:
-          # Test sphinx 7.x.
-          SPHINX_VERSION: '>=7,<8'
-        run: |
-          tox -e py -- --cov-report xml:coverage.xml --cov
+          tox -- --cov-report xml:coverage.xml --cov
