@@ -20,7 +20,7 @@ def get_github_base_url():
     git_remote_out, git_remote_err = git_remote_proc.communicate()
     if git_remote_proc.returncode != 0:
         raise RuntimeError(
-            "Non-zero exit code [{0}] from git remote.  STDERR: {1}".format(
+            "Non-zero exit code [{}] from git remote.  STDERR: {}".format(
                 git_remote_proc.returncode, git_remote_err.decode("ascii")
             )
         )
@@ -59,7 +59,7 @@ def get_github_base_url():
     git_rev_parse_out, git_rev_parse_err = git_rev_parse_proc.communicate()
     if git_rev_parse_proc.returncode != 0:
         raise RuntimeError(
-            "Non-zero exit code [{0}] from git rev-parse.  STDERR: {1}".format(
+            "Non-zero exit code [{}] from git rev-parse.  STDERR: {}".format(
                 git_rev_parse_proc.returncode, git_rev_parse_err.decode("ascii")
             )
         )
