@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 ########################################################################################
 # This file is part of exhale.  Copyright (c) 2017-2023, Stephen McDowell.             #
 # Full BSD 3-Clause license available here:                                            #
@@ -74,7 +73,7 @@ class node(ExhaleNode):  # noqa: N801
     """
 
     def __init__(self, name, kind):
-        super(node, self).__init__(name, kind, "")  # no Doxygen refid available
+        super().__init__(name, kind, "")  # no Doxygen refid available
 
     def __repr__(self):
         """
@@ -136,7 +135,7 @@ class clike(node):  # noqa: N801
     """
 
     def __init__(self, kind, name, template=[]):
-        super(clike, self).__init__(name, kind)
+        super().__init__(name, kind)
         self.template = template
 
 
@@ -154,7 +153,7 @@ class directory(node):  # noqa: N801
     """
 
     def __init__(self, name):
-        super(directory, self).__init__(name, "dir")
+        super().__init__(name, "dir")
 
 
 class define(node):  # noqa: N801
@@ -170,7 +169,7 @@ class define(node):  # noqa: N801
     """
 
     def __init__(self, name):
-        super(define, self).__init__(name, "define")
+        super().__init__(name, "define")
 
 
 class enum(node):  # noqa: N801
@@ -187,7 +186,7 @@ class enum(node):  # noqa: N801
     """
 
     def __init__(self, name, values=None):
-        super(enum, self).__init__(name, "enum")
+        super().__init__(name, "enum")
         self.values = values
 
 
@@ -205,7 +204,7 @@ class file(node):  # noqa: N801
     """
 
     def __init__(self, name):
-        super(file, self).__init__(name, "file")
+        super().__init__(name, "file")
         self.location = None  # TODO: these should not be needed anymore
         self.namespaces_used = []
 
@@ -244,7 +243,7 @@ class function(node):  # noqa: N801
     """
 
     def __init__(self, return_type, name, template=None):
-        super(function, self).__init__(name, "function")
+        super().__init__(name, "function")
         self.return_type = return_type
         self.parameters = []  # set later, required to let functions be keys in dict
         self.template = template
@@ -289,11 +288,11 @@ class page(node):  # noqa: N801
     """
 
     def __init__(self, name):
-        super(page, self).__init__(name, "page")
+        super().__init__(name, "page")
         self.location = None
 
 
-class parameters(object):  # noqa: N801
+class parameters:  # noqa: N801
     """
     Represent a |function| parameters.
 
@@ -358,7 +357,7 @@ class namespace(node):  # noqa: N801
     """
 
     def __init__(self, name):
-        super(namespace, self).__init__(name, "namespace")
+        super().__init__(name, "namespace")
 
 
 class typedef(node):  # noqa: N801
@@ -379,7 +378,7 @@ class typedef(node):  # noqa: N801
     """
 
     def __init__(self, new_name, old_name, template=None):
-        super(typedef, self).__init__(new_name, "typedef")
+        super().__init__(new_name, "typedef")
         self.old_name = old_name
         self.template = template
 
@@ -396,7 +395,7 @@ class union(node):  # noqa: N801
     """
 
     def __init__(self, name):
-        super(union, self).__init__(name, "union")
+        super().__init__(name, "union")
 
 
 class variable(node):  # noqa: N801
@@ -414,7 +413,7 @@ class variable(node):  # noqa: N801
     """
 
     def __init__(self, _type, name):
-        super(variable, self).__init__(name, "variable")
+        super().__init__(name, "variable")
         self.type = _type
 
 
@@ -448,7 +447,7 @@ def deep_copy_hierarchy_dict(spec):
     return traverse_copy(spec)
 
 
-class root(object):  # noqa: N801
+class root:  # noqa: N801
     """
     Represent a class or file hierarchy to simulate an :class:`exhale.graph.ExhaleRoot`.
 
@@ -554,7 +553,7 @@ class root(object):  # noqa: N801
             self.unions.remove(u)
 
     def _track_node(self, node):
-        lst_name = "Mapping from node.kind={} to internal list not found.".format(node.kind)
+        lst_name = f"Mapping from node.kind={node.kind} to internal list not found."
         kind = node.kind
         if kind in ["class", "struct"]:
             lst_name = "class_like"
@@ -580,7 +579,7 @@ class root(object):  # noqa: N801
             lst_name = "variables"
 
         if lst_name not in self.__dict__.keys():
-            raise ValueError("Invalid internal list name: {}".format(lst_name))
+            raise ValueError(f"Invalid internal list name: {lst_name}")
 
         if node not in self.__dict__[lst_name]:
             self.__dict__[lst_name].append(node)
@@ -594,14 +593,14 @@ class root(object):  # noqa: N801
             if isinstance(parent, function):
                 if not isinstance(child_spec, parameters):
                     raise ValueError(
-                        "Specification of 'function' [{}] must be of type 'parameters'".format(parent.name)
+                        f"Specification of 'function' [{parent.name}] must be of type 'parameters'"
                     )
                 else:
                     parent.setParameters(child_spec)
                     return
             else:
                 raise ValueError(
-                    "Specification of '{}' [{}] must be a dictionary.".format(parent.kind, parent.name)
+                    f"Specification of '{parent.kind}' [{parent.name}] must be a dictionary."
                 )
 
         for child in child_spec:
@@ -653,7 +652,7 @@ class root(object):  # noqa: N801
                     child.name = os.path.join(parent.name, child.name)
             # simulate how Doxygen will present fully qualified names
             if parent.kind in ["class", "struct", "namespace"]:
-                child.name = "{}::{}".format(parent.name, child.name)
+                child.name = f"{parent.name}::{child.name}"
                 if self.hierarchy_type == "file":
                     child.def_in_file = parent.def_in_file
                     if child.kind == "namespace":
@@ -733,7 +732,7 @@ class class_hierarchy(root):  # noqa: N801
     """
 
     def __init__(self, hierarchy):
-        super(class_hierarchy, self).__init__("class", hierarchy)
+        super().__init__("class", hierarchy)
 
 
 class file_hierarchy(root):  # noqa: N801
@@ -805,7 +804,7 @@ class file_hierarchy(root):  # noqa: N801
     """
 
     def __init__(self, hierarchy):
-        super(file_hierarchy, self).__init__("file", hierarchy)
+        super().__init__("file", hierarchy)
 
 
 ########################################################################################
@@ -861,7 +860,7 @@ def _compare_children(hierarchy_type, test, test_child, exhale_child):
             if test_child.kind == "dir":
                 # Make sure full directory path is included (at least for now, may
                 # put it back in the title at some point).
-                path = "*Directory path:* ``{path}``".format(path=test_child.name)
+                path = f"*Directory path:* ``{test_child.name}``"
                 test.assertTrue(
                     path in generated_rst,
                     textwrap.dedent('''
@@ -975,7 +974,7 @@ def _compare_children(hierarchy_type, test, test_child, exhale_child):
                 else:
                     parent_unique_id = test_child.parent.name
                 parent_unique_id = parent_unique_id.replace(":", "_").replace(os.sep, "_").replace(" ", "_")
-                parent_link_name = "{kind}_{id}".format(kind=test_child.parent.kind, id=parent_unique_id)
+                parent_link_name = f"{test_child.parent.kind}_{parent_unique_id}"
                 parent_name = test_child.parent.name
                 parent_reference = textwrap.dedent('''
                     |exhale_lsh| :ref:`Parent directory <{parent_link}>` (``{parent_name}``)
@@ -1051,11 +1050,11 @@ def _compare_children(hierarchy_type, test, test_child, exhale_child):
         ''').format(
             child_name=test_child.breathe_identifier(),
             tc_names="\n".join([
-                "- {breathe_identifier}".format(breathe_identifier=child.breathe_identifier())
+                f"- {child.breathe_identifier()}"
                 for child in test_child.children
             ]),
             ec_names="\n".join([
-                "- {breathe_identifier}".format(breathe_identifier=child.breathe_identifier())
+                f"- {child.breathe_identifier()}"
                 for child in exhale_child.children if child.kind not in CHILD_COUNT_IGNORE_KINDS
             ])
         )
@@ -1185,7 +1184,7 @@ def compare_class_hierarchy(test, test_root):
         if exhale_obj is None:
             test.assertTrue(
                 False,
-                msg="Did not find match for [{}] {}".format(test_obj.kind, test_obj.name)
+                msg=f"Did not find match for [{test_obj.kind}] {test_obj.name}"
             )
 
         _compare_children("class", test, test_obj, exhale_obj)
@@ -1273,7 +1272,7 @@ def compare_file_hierarchy(test, test_root):
             return "{ /* empty */ }"
         ret = "{\n"
         for item in s:
-            ret += "  {item}\n".format(item=item)
+            ret += f"  {item}\n"
         ret += "}"
         return ret
 
@@ -1321,10 +1320,10 @@ def compare_file_hierarchy(test, test_root):
             "Function overload group [{group}]:\nTest:\n{test_ids}\n\nExhale:\n{exhale_ids}\n".format(
                 group=key,
                 test_ids="".join(
-                    "\n - {}".format(f.full_signature()) for f in test_overloads[key]
+                    f"\n - {f.full_signature()}" for f in test_overloads[key]
                 ),
                 exhale_ids="".join(
-                    "\n - {}".format(f.full_signature()) for f in exhale_overloads[key]
+                    f"\n - {f.full_signature()}" for f in exhale_overloads[key]
                 )
             )
         )

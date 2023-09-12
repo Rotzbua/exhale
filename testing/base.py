@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 ########################################################################################
 # This file is part of exhale.  Copyright (c) 2017-2023, Stephen McDowell.             #
 # Full BSD 3-Clause license available here:                                            #
@@ -53,8 +52,8 @@ def make_default_config(project):
         "exhale_args": {
             # required arguments
             "containmentFolder": "./api",
-            "rootFileName": "{}_root.rst".format(project),
-            "rootFileTitle": "``{}`` Test Project".format(project),
+            "rootFileName": f"{project}_root.rst",
+            "rootFileTitle": f"``{project}`` Test Project",
             "doxygenStripFromPath": "..",
             # additional arguments
             "exhaleExecutesDoxygen": True,
@@ -89,7 +88,7 @@ class ExhaleTestCaseMetaclass(type):
         """
         if attrs["__module__"] == __name__:
             # we skip everything if we're creating ExhaleTestCase below
-            return super(ExhaleTestCaseMetaclass, mcs).__new__(mcs, name, bases, attrs)
+            return super().__new__(mcs, name, bases, attrs)
 
         # Make sure `test_project` is defined in all derived classes.
         test_project = attrs.get("test_project", None)
@@ -98,9 +97,9 @@ class ExhaleTestCaseMetaclass(type):
             raise RuntimeError(
                 "ExhaleTestCase subclasses must define a 'test_project' attribute"
             )
-        if not isinstance(test_project, six.string_types):
+        if not isinstance(test_project, str):
             raise RuntimeError(
-                "'test_project' in class {} must be a string!".format(name)
+                f"'test_project' in class {name} must be a string!"
             )
 
         # looking for test methods ("test_*")
@@ -122,7 +121,7 @@ class ExhaleTestCaseMetaclass(type):
                 yield  # the test runs
                 # @no_cleanup sets self.testroot to [self.testroot] as a flag that
                 # cleanup should not transpire
-                if isinstance(self.testroot, six.string_types):
+                if isinstance(self.testroot, str):
                     # This cleanup happens between each test case, do not delete docs/
                     # until all tests for this class are done!
                     containmentFolder = self.getAbsContainmentFolder()
@@ -154,7 +153,7 @@ class ExhaleTestCaseMetaclass(type):
                 testroot = os.path.join(
                     TEST_PROJECTS_ROOT,
                     self.test_project,
-                    "docs_{}_{}".format(self.__class__.__name__, self._testMethodName)
+                    f"docs_{self.__class__.__name__}_{self._testMethodName}"
                 )
                 if os.path.isdir(testroot):
                     shutil.rmtree(testroot)
@@ -207,7 +206,7 @@ class ExhaleTestCaseMetaclass(type):
                 # perform cleanup by deleting the docs dir
                 # @no_cleanup sets self.testroot to [self.testroot] as a flag that
                 # cleanup should not transpire
-                if isinstance(self.testroot, six.string_types) and os.path.isdir(self.testroot):
+                if isinstance(self.testroot, str) and os.path.isdir(self.testroot):
                     shutil.rmtree(self.testroot)
 
                 self.testroot = None
@@ -230,7 +229,7 @@ class ExhaleTestCaseMetaclass(type):
             # Import the default hierarchy dictionaries from the testing/projects folder
             # and make it available to the class directly.
             proj_mod = import_module(
-                "testing.projects.{test_project}".format(test_project=test_project))
+                f"testing.projects.{test_project}")
 
             default_class_hierarchy_dict = proj_mod.default_class_hierarchy_dict
 
@@ -249,13 +248,12 @@ class ExhaleTestCaseMetaclass(type):
         # applying the default configuration override, which is overridden using the
         # @confoverride decorator at class or method level
         return default_confoverrides(
-            super(ExhaleTestCaseMetaclass, mcs).__new__(mcs, name, bases, attrs),
+            super().__new__(mcs, name, bases, attrs),
             make_default_config(attrs["test_project"])
         )
 
 
-@add_metaclass(ExhaleTestCaseMetaclass)
-class ExhaleTestCase(unittest.TestCase):
+class ExhaleTestCase(unittest.TestCase, metaclass=ExhaleTestCaseMetaclass):
     """
     The primary project based test class to inherit from.
 
@@ -440,7 +438,7 @@ class ExhaleTestCase(unittest.TestCase):
         # validate that {containmentFolder}/{rootFileName} was created
         assert os.path.isfile(os.path.join(containmentFolder, rootFileName))
         # validate that the title was included
-        with open(os.path.join(containmentFolder, rootFileName), "r") as root:
+        with open(os.path.join(containmentFolder, rootFileName)) as root:
             root_contents = root.read()
         root_heading = "{}\n{}".format(
             rootFileTitle,
@@ -541,7 +539,7 @@ class ExhaleTestCase(unittest.TestCase):
         # has actually been included.
         full_root_file_path = root.full_root_file_path
         root_file_includes = []
-        with open(full_root_file_path, "r") as full_root_f:
+        with open(full_root_file_path) as full_root_f:
             for line in full_root_f:
                 include_mark = ".. include::"
                 if line.startswith(include_mark):
@@ -590,7 +588,7 @@ class ExhaleTestCase(unittest.TestCase):
                 )
             check(
                 key in root_file_includes,
-                "Page '{key}' {msg}".format(key=key, msg=msg))
+                f"Page '{key}' {msg}")
 
         # Some tests may want the toctree names afterward.
         return full_api_toctrees, orphan_toctrees
