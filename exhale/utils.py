@@ -24,13 +24,8 @@ import time
 import traceback
 import types
 
-# Fancy error printing <3
-try:
-    import pygments
-    from pygments import lexers, formatters
-    __USE_PYGMENTS = True
-except:
-    __USE_PYGMENTS = False
+import pygments
+from pygments import lexers, formatters
 
 
 def heading_mark(title, char):
@@ -792,7 +787,7 @@ def verbose_log(msg, ansi_fmt=None):
 
 
 def __fancy(text, language, fmt):
-    if not configs._on_rtd and __USE_PYGMENTS:
+    if not configs._on_rtd:
         try:
             lang_lex = lexers.find_lexer_class_by_name(language)
             fmt      = formatters.get_formatter_by_name(fmt)
